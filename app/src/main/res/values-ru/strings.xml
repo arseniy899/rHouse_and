@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SmartHouse</string>
+    <string name="action_sign_in">Войти</string>
+    <string name="action_sign_in_short">Войти</string>
+    <string name="invalid_password">Неверный пароль</string>
+    <string name="invalid_username">Неверное имя пользователя</string>
+    <string name="loading_hubs">Загрузка доступных домов</string>
+    <string name="login_failed">Ошибка загрузки</string>
+    <string name="prompt_email">Логин</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="scr_main_title">Главная</string>
+    <string name="state_on">ВКЛ</string>
+    <string name="state_off">ВЫКЛ</string>
+    <string name="loading">Обновление</string>
+    <string name="unit_history">История устройства</string>
+    <string name="hub_change_title">Смена умного дома</string>
+    <string name="hub_change_confirm_text">Вы уверены, что хотите сменить умный дом по-умолчанию</string>
+    <string name="yes">Да</string>
+    <string name="close">Закрыть</string>
+    <string name="unit_value_set_res_scheduled">Запланирована установка значения</string>
+    <string name="unit_value_set_res">Установлено значение</string>
+    <string name="unit_value_set_chos_dateTime">Укажите дату и время</string>
+    <string name="unit_value_set_scheduling">Планируется установка…</string>
+    <string name="unit_value_setting">Установка значения</string>
+    <string name="cancel">Отмена</string>
+    <string name="unit_value_set_confirm">Установить</string>
+    <string name="hub_select_saving">Сохранение выбора…</string>
+    <string name="unit_value_set_for"> для </string>
+    <string name="unit_value_set_schedule">Запланировать установку</string>
+    <string name="unit_value_set_now">Установить сейчас</string>
+    <string name="authorization">Авторизация</string>
+    <string name="hub_title_placeholder">[Мой милый дом]</string>
+    <string name="goto_hub">Перейти к умному дому</string>
+    <string name="notify_from_home">Уведомление от умного дома</string>
+    <string name="field_should_be_nonempty">Поле не может быть пустым</string>
+</resources>

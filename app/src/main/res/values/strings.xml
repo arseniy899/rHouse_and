@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">SmartHouse</string>
+    <string name="scr_main_title">Main</string>
+    <string name="prompt_email">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="loading_hubs">Loading homes…</string>
+    <string name="invalid_password">Invalid password</string>
+    <string name="invalid_username">Invalid username</string>
+    <string name="state_on">ON</string>
+    <string name="state_off">OFF</string>
+    <string name="loading">Refreshing</string>
+    <string name="unit_history">Device history</string>
+    <string name="hub_change_title">Change of the default home</string>
+    <string name="hub_change_confirm_text">Are you sure to change the default home?</string>
+    <string name="yes">Yes</string>
+    <string name="close">Close</string>
+    <string name="unit_value_set_res_scheduled">Value set scheduled</string>
+    <string name="unit_value_set_res">Value was set</string>
+    <string name="unit_value_set_for"> for </string>
+    <string name="unit_value_set_chos_dateTime">Choose date and time</string>
+    <string name="unit_value_set_scheduling">Value is scheduling to be set…</string>
+    <string name="unit_value_setting">Value is being set</string>
+    <string name="cancel">Cancel</string>
+    <string name="unit_value_set_confirm">Set</string>
+    <string name="hub_select_saving">Saving…</string>
+    <string name="unit_value_set_schedule">Schedule value set</string>
+    <string name="unit_value_set_now">Set now</string>
+    <string name="authorization">Authorization</string>
+    <string name="hub_title_placeholder">[My sweet home]</string>
+    <string name="goto_hub">Go to Smart Home</string>
+    <string name="notify_from_home">Notification from smart home</string>
+    <string name="field_should_be_nonempty">This field is required</string>
+</resources>

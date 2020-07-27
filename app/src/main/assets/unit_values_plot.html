@@ -1,0 +1,252 @@
+<html>
+	<head>
+	<style>
+	table {
+		border-collapse: collapse;
+		width: 100%;
+		
+	}
+
+	th, td {
+		text-align: left;
+		padding: 8px;
+	}
+
+	tr:nth-child(even){background-color: #f2f2f2}
+
+	th {
+		position: -webkit-sticky;
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		background: aliceblue;
+	}
+	</style>
+	<script type="text/javascript" src="amcharts.js"></script>
+	<script type="text/javascript" src="serial.js"></script>
+	
+	
+	<script>
+		function Hide(d)
+		{
+			HideContent(d);
+		}
+		function Show(d)
+		{
+			ShowContent(d);
+		}
+		function HideContent(d)
+		{
+			if(isElementDOM(d))
+				var div = d;
+			else
+				var div = document.getElementById(d);
+			div.style.display = "none";
+		}
+		function ShowContent(d)
+		{
+			if(isElementDOM(d))
+				var div = d;
+			else
+				var div = document.getElementById(d);
+			div.style.display = "block";
+		}
+		function isElementDOM(element) {
+			return element instanceof Element || element instanceof HTMLDocument;  
+		}
+		function isShown( elem ) {
+			//return  window.getComputedStyle(elem).display !== "none";
+			return !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
+		};
+		var chart;
+		function setValues(respJSON)
+		{
+			var data = JSON.parse(respJSON)
+			var array = [];
+			if( (data.unit.valueType.includes("int") || data.unit.valueType.includes("float") ) && (!data.unit.possValues.includes(",") || data.unit.possValues.split(",").length == 2) )
+			{
+				plotValues(data);
+				Show("chart-wrapper");
+				Hide("table-wrapper");
+			}
+			else
+			{
+				Show("table-wrapper");
+				Hide("chart-wrapper");
+				writeValuesTable(data);
+			}
+			
+		}
+		function plotValues(data)
+		{
+			var ctx = document.getElementById('plot');
+			var countSeries = 0;
+			var values = data.unit.values;
+			var valueTypes = data.unit.valueType.split(';');
+			for (var i = 0; i < values.length; i++) 
+			{
+				var value = values[i];
+				var splitt = value.value.split(',');
+				value.date = value.timeStamp
+				for(var q = 0; q < splitt.length; q++)
+				{
+					var subVal = parseFloat(splitt[q]);
+					//if(valueTypes[q] == "sint")
+					//	subVal += 128;
+					value["val"+q] = subVal;
+				}
+				countSeries = splitt.length;
+			}
+			var graphs = [];
+			for (var i = 0; i < countSeries; i++) 
+			{
+				graphs[i] = {
+					"id": "g"+(i+1),
+					"bullet": "round",
+					"bulletBorderAlpha": 1,
+					"bulletColor": "#FFFFFF",
+					"bulletSize": 5,
+					"hideBulletsCount": 50,
+					"lineThickness": 2,
+					"title": "red line",
+					"useLineColorForBulletBorder": true,
+					"valueField": "val"+i
+				};
+			}
+			//log_obj("Plot/Datasets",values);
+			
+			/*var myChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					datasets:datasets
+				},
+				options: {
+					scales: {
+						xAxes: [{
+							type: 'time',
+							time: {
+								unit: 'month'
+							},
+							position: 'bottom'
+						}]
+					}
+				}
+			});*/
+			
+
+			//chart.addListener("rendered", zoomChart);
+			//chart.zoomToIndexes(0, 20);
+			//zoomChart();
+			chart.graphs = graphs;
+			chart.dataProvider = values;
+			chart.validateData();
+		}
+		
+		function writeValuesTable(data)
+		{
+			var values = data.unit.values;
+			var tbdy = document.getElementById('table-values');
+			while (tbdy.firstChild) tbdy.removeChild(tbdy.firstChild);
+			for (var i = 0; i < values.length; i++) 
+			{
+				var value = values[i];
+				var tr = document.createElement('tr');
+
+				var tdDate = document.createElement('td');
+				tdDate.appendChild(document.createTextNode(value.timeStamp));
+				tr.appendChild(tdDate);
+				var tdVal = document.createElement('td');
+				tdVal.innerHtml = value.value;
+				tdVal.className = 'val-field';
+				tdVal.appendChild(document.createTextNode(value.value));
+				
+				tr.appendChild(tdVal);
+
+				tbdy.appendChild(tr);
+			}
+			window.scrollTo(0, tbdy.offsetHeight);
+			/*window.scrollBy({ 
+				top: tbdy.offsetHeight, // Scroll the the end of the tabele's height
+				behavior: 'smooth' 
+			});*/
+		}
+		function start()
+		{
+			chart = AmCharts.makeChart("chartdiv", {
+				"type": "serial",
+				"theme": "frozen",
+				//"autoMargins": false,
+				//"marginBottom": "0",
+				//"marginLeft": "5",
+				//"marginTop": "0",
+				//"marginRight": "-0",
+				//"labelOffset": "50px",
+				"pathToImages": "http://www.amcharts.com/lib/3/images/",
+				"dataDateFormat": "YYYY.MM.DD HH:NN:SS",
+				"valueAxes": [{
+					"id":"v1",
+					"axisAlpha": 0,
+					"position": "left"
+				}],
+				"graphs": [{
+					"id": "g1",
+					"bullet": "round",
+					"bulletBorderAlpha": 1,
+					"bulletColor": "#FFFFFF",
+					"bulletSize": 5,
+					"hideBulletsCount": 50,
+					"lineThickness": 2,
+					"title": "red line",
+					"useLineColorForBulletBorder": true,
+					"valueField": "value",
+					"labelOffset": "50px"
+				}],
+				"chartScrollbar": {
+					"graph": "g1",
+					"scrollbarHeight": 30
+				},
+				"chartCursor": {
+					"cursorPosition": "mouse",
+					"pan": true,
+					"valueLineEnabled":true,
+					"valueLineBalloonEnabled":true,
+					"categoryBalloonDateFormat": "MMM-DD HH:NN"
+				},
+				"categoryField": "date",
+				"categoryAxis": {
+					"parseDates": true,
+					"dashLength": 1,
+					"minorGridEnabled": true,
+					"position": "bottom",
+					"minPeriod": "10ss",
+				},
+				"timeUnit": "minute",
+				"count": 5,
+				//"tooltipText" : "{dateX.formatDate('M-d HH:NN:ss')}: {valueY.formatNumber('#.00')}",
+				"dataProvider": [],
+				"xAxes": [{
+					"type": "DateAxis",
+					"tooltipDateFormat": "yyyy-MM-dd"
+				  }]
+			});
+		}
+	</script>
+	</head>
+	<body onload="start()">
+		<div id="chart-wrapper" style="display:none"><div id="chartdiv" style="height:calc(100vh - 20px)"></div></div>
+		<div id="table-wrapper" style="display:none">
+			<table>
+			<thead>
+				<tr>
+					<th>Дата/Время</th>
+					<th>Значение (Значения)</th>
+				</tr>
+			</thead>
+			<tbody id="table-values">
+			</tbody>
+			</table>
+		</div>
+		
+	</body>
+</html>
+
