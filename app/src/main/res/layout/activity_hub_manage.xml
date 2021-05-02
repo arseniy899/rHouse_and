@@ -49,7 +49,9 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary" />
+            android:background="?attr/colorPrimary"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

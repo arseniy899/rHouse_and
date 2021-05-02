@@ -155,13 +155,20 @@ public class Hub implements Serializable
 			id      = unitJS.get("id").getAsInt();
 			sectId  = unitJS.get("sectId").getAsInt();
 			name    = unitJS.get("name").getAsString();
-			value   = unitJS.get("lastValue").getAsString();
+			value   = unitJS.get("lastValue").getAsString().trim();
 			lastTime= unitJS.get("lastTime").getAsString();
 			units   = unitJS.get("units").getAsString();
 			direction   = unitJS.get("direction").getAsString();
 			iconURL = unitJS.get("icon").getAsString();
 			possValues= unitJS.get("possValues").getAsString();
-			color= Color.parseColor("#"+unitJS.get("color").getAsString());
+			try
+			{
+				color= Color.parseColor("#"+unitJS.get("color").getAsString());
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 			textColor = Common.getContrastColor(color);
 			if(iconURL.startsWith("//"))
 				iconURL = "http:"+iconURL;
@@ -190,7 +197,8 @@ public class Hub implements Serializable
 									value+units+context.getString(R.string.unit_value_set_for)+name,Toast.LENGTH_LONG).show();
 						else
 							Toast.makeText(context,context.getString(R.string.unit_value_set_res)+" "+
-									value+units+context.getString(R.string.unit_value_set_for)+name,Toast.LENGTH_LONG).show();
+									value+units+" "+context.getString(R.string.unit_value_set_for)+" "
+									+name,Toast.LENGTH_LONG).show();
 						runnable.run();
 					}
 				}, context.getString(R.string.unit_value_setting));
@@ -205,7 +213,7 @@ public class Hub implements Serializable
 							Map<String, String> map = new HashMap<>();
 							map.put("id",id+"");
 							map.put("value",value);
-							map.put("date",Common.dateFormat.format(date));
+							map.put("date",Common.dateTimeFormat.format(date));
 							WebRequest.request(context, "/units.schedule.value.php", map, new WebCallBackInterface()
 							{
 								
@@ -213,7 +221,7 @@ public class Hub implements Serializable
 								public void onSuccess (JsonObject result)
 								{
 									Toast.makeText(context,context.getString(R.string.unit_value_set_res_scheduled)+"  "+
-											value+units+context.getString(R.string.unit_value_set_for)+name,Toast.LENGTH_LONG).show();
+											value+units+" "+context.getString(R.string.unit_value_set_for)+" "+name,Toast.LENGTH_LONG).show();
 									runnable.run();
 								}
 							}, context.getString(R.string.unit_value_set_scheduling));

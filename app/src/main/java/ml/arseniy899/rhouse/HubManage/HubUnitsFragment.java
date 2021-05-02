@@ -14,7 +14,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import ml.arseniy899.rhouse.Common;
 import ml.arseniy899.rhouse.Hub;
 import ml.arseniy899.rhouse.R;
 import ml.arseniy899.rhouse.UnitPlotActivity;
@@ -23,6 +25,7 @@ import ml.arseniy899.rhouse.WebRequest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.zxing.common.StringUtils;
 import com.koushikdutta.ion.Ion;
 import com.shawnlin.numberpicker.NumberPicker;
 
@@ -50,7 +53,7 @@ public class HubUnitsFragment extends Fragment
 		super.onCreate(savedInstanceState);
 		
 	}
-	
+	SwipeRefreshLayout swipeRefresh;
 	@Override
 	public View onCreateView(
 			@NonNull LayoutInflater inflater, ViewGroup container,
@@ -58,14 +61,23 @@ public class HubUnitsFragment extends Fragment
 	{
 		View root = inflater.inflate(R.layout.fragment_hub_manage, container, false);
 		adapter = new UnitAdapter(inflater,root.findViewById(R.id.unitsList));
+		swipeRefresh = root.findViewById(R.id.swiperefresh);
+		swipeRefresh.setOnRefreshListener(() -> loadUnits(getContext()));
 		loadUnits(this.getContext());
 		return root;
 	}
 	void loadUnits(Context context)
 	{
+		swipeRefresh.setRefreshing(true);
 		Map<String, String> map = new HashMap<>();
 		WebRequest.requestMem(context, "/units.get.all.php", map, new WebCallBackInterface()
 		{
+			@Override
+			public void onCompleted()
+			{
+				super.onCompleted();
+				swipeRefresh.setRefreshing(false);
+			}
 			
 			@Override
 			public void onSuccess (JsonObject result)
@@ -201,16 +213,20 @@ public class HubUnitsFragment extends Fragment
 			}
 			return row;
 		}
+		boolean isListenSwitch = true;
 		View renderSwitch(Hub.Unit unit, ViewGroup parent)
 		{
 			View row = inflater.inflate (R.layout.item_hub_unit_switch, parent, false);
 			Switch switchS = row.findViewById(R.id.unitValue);
-			if(unit.value.equals("1"))
+			String states [] = unit.possValues.split(",");
+			String offVal = states[0];
+			String onVal = states[1];
+			if(unit.value.equals(onVal))
 			{
 				switchS.setChecked(true);
 				switchS.setText(context.getString(R.string.state_on));
 			}
-			else if(unit.value.equals("0"))
+			else if(unit.value.equals(offVal))
 			{
 				switchS.setChecked(false);
 				switchS.setText(context.getString(R.string.state_off));
@@ -218,12 +234,29 @@ public class HubUnitsFragment extends Fragment
 			else
 				switchS.setText(unit.value);
 			if(unit.direction.contains("O"))
+			{
+				
 				switchS.setOnCheckedChangeListener((buttonView, isChecked) ->
 				{
-					switchS.setText(isChecked ? context.getString(R.string.state_on) :
-							context.getString(R.string.state_off));
-					unit.setValue(HubUnitsFragment.context, isChecked ? "1" : "0", () ->{});
+					
+					if (isListenSwitch)
+					{
+						isListenSwitch = false;
+						switchS.setChecked(!isChecked);
+						isListenSwitch = true;
+						unit.setValue(HubUnitsFragment.context, isChecked ? onVal : offVal,
+								() ->
+								{
+									isListenSwitch = false;
+									switchS.setChecked(isChecked);
+									isListenSwitch = true;
+									switchS.setText(isChecked ? context.getString(R.string.state_on) :
+											context.getString(R.string.state_off));
+								});
+					}
+					
 				});
+			}
 			else
 				switchS.setEnabled(false);
 			return row;
@@ -258,32 +291,32 @@ public class HubUnitsFragment extends Fragment
 				max = Integer.parseInt(params[2]);
 			}
 			ArrayList <String> values = new ArrayList<>();
-			int value = Integer.parseInt(unit.value);
+			String valueStr = unit.value.replaceAll("[^\\d.]", "");
+			int value = (valueStr.isEmpty()) ? min : Integer.parseInt(valueStr);
 			int valIndex = 1;
 			for (int i = min; i <= max; i+= step)
 			{
 				if(i == value)
-					valIndex = values.size()-1;
+					valIndex = values.size();
 				values.add(i + unit.units);
 			}
-			if(valIndex < 1)
-				valIndex = 1;
-			seekBar.setMinValue(1);
-			seekBar.setMaxValue(values.size());
+			seekBar.setMinValue(0);
+			seekBar.setMaxValue(values.size()-1);
 			seekBar.setDisplayedValues(values.toArray(new String[0]));
 			seekBar.setValue(valIndex);
 
 			ImageView apply = row.findViewById(R.id.unitApply);
 			apply.setVisibility(View.GONE);
-			apply.setColorFilter(unit.textColor);
+//			apply.setColorFilter(unit.textColor);
 			
 			seekBar.setOnValueChangedListener((picker, oldVal, newVal) ->
 			{
-				apply.setVisibility(View.VISIBLE);
+				if (apply.getVisibility() != View.VISIBLE)
+					apply.setVisibility(View.VISIBLE);
 			});
 			apply.setOnClickListener(v ->
 					unit.setValue(HubUnitsFragment.context,
-							values.get(seekBar.getValue()-1).replace(unit.units,"")+"",
+							values.get(seekBar.getValue()).replace(unit.units,"")+"",
 					() ->apply.setVisibility(View.GONE)));
 			return row;
 		}
@@ -292,7 +325,7 @@ public class HubUnitsFragment extends Fragment
 		{
 			Hub.Unit unit = getChild(groupPosition, childPosition);
 			View row;
-			if(unit.possValues .equals("0,1"))
+			if(Common.countCharOccurrence(unit.possValues,',') == 1)
 				row = renderSwitch(unit, parent);
 			else if(unit.possValues.contains(":"))
 				row = renderSeek(unit, parent);

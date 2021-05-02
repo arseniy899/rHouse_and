@@ -38,6 +38,7 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_marginTop="8dp"
+                    app:layout_constraintBottom_toTopOf="@+id/unitTime"
                     app:layout_constraintEnd_toEndOf="@+id/openPlot"
                     app:layout_constraintTop_toBottomOf="@+id/openPlot"
                     app:srcCompat="@drawable/ic_check_black_24dp" />
@@ -162,7 +163,7 @@
                     android:layout_centerInParent="true"
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="@+id/openPlot"
+                    app:layout_constraintEnd_toStartOf="@+id/unitApply"
                     app:layout_constraintStart_toStartOf="@+id/unitIcon"
                     app:layout_constraintTop_toBottomOf="@+id/unitName"
                     app:np_dividerColor="@color/colorPrimary"

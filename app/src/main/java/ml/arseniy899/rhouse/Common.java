@@ -19,10 +19,11 @@ import java.util.ArrayList;
 
 public class Common
 {
-	public static String API_URL = "https://r-ho.ml/portal/api";
+	public static String API_URL = "https://r-ho.in/portal/api";
 	public static Hub selectedHub;
 	public static ArrayList<Hub> boundHubs = new ArrayList<>();
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+	public static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 	
 	public static View getRootView(Activity activity)
 	{
@@ -115,6 +116,17 @@ public class Common
 					activity.startActivity(intent);
 				}, true);
 			}
+	}
+	public static int countCharOccurrence(String str, char c)
+	{
+		int count = 0;
+		
+		for(int i=0; i < str.length(); i++)
+		{    if(str.charAt(i) == c)
+			count++;
+		}
+		
+		return count;
 	}
 }
 

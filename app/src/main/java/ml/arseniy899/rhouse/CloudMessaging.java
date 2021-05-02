@@ -41,7 +41,6 @@ public class CloudMessaging extends FirebaseMessagingService
                 text = remoteMessage.getData().get("text");
         
         }
-        
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             title = remoteMessage.getNotification().getTitle();
@@ -85,7 +84,7 @@ public class CloudMessaging extends FirebaseMessagingService
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setDefaults(Notification.FLAG_AUTO_CANCEL | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            notificationBuilder.setSmallIcon(R.drawable.ic_stat_name);
+            notificationBuilder.setSmallIcon(icon);
             notificationBuilder.setColor(getResources().getColor(R.color.colorPrimaryDark));
         } else {
             notificationBuilder.setSmallIcon(icon);
